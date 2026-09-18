@@ -1,81 +1,39 @@
-{
-  "nbformat": 4,
-  "nbformat_minor": 0,
-  "metadata": {
-    "colab": {
-      "provenance": []
-    },
-    "kernelspec": {
-      "name": "python3",
-      "display_name": "Python 3"
-    },
-    "language_info": {
-      "name": "python"
-    }
-  },
-  "cells": [
-    {
-      "cell_type": "code",
-      "execution_count": 1,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "Q31FrqMRGhiu",
-        "outputId": "daa7ea42-6072-40f1-c718-e3b1eef77e3f"
-      },
-      "outputs": [
-        {
-          "output_type": "stream",
-          "name": "stdout",
-          "text": [
-            "Model Accuracy: 72.08%\n",
-            "\n",
-            "Classification Report:\n",
-            "              precision    recall  f1-score   support\n",
-            "\n",
-            "           0       0.79      0.78      0.78        99\n",
-            "           1       0.61      0.62      0.61        55\n",
-            "\n",
-            "    accuracy                           0.72       154\n",
-            "   macro avg       0.70      0.70      0.70       154\n",
-            "weighted avg       0.72      0.72      0.72       154\n",
-            "\n"
-          ]
-        }
-      ],
-      "source": [
-        "# ==========================================\n",
-        "# Task 4: Disease Prediction from Medical Data\n",
-        "# ==========================================\n",
-        "import pandas as pd\n",
-        "import numpy as np\n",
-        "from sklearn.model_selection import train_test_split\n",
-        "from sklearn.ensemble import RandomForestClassifier\n",
-        "from sklearn.metrics import accuracy_score, classification_report, confusion_matrix\n",
-        "import warnings\n",
-        "warnings.filterwarnings('ignore')\n",
-        "\n",
-        "# 1. Loading Dataset\n",
-        "url = \"https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv\"\n",
-        "column_names = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome']\n",
-        "df = pd.read_csv(url, names=column_names)\n",
-        "\n",
-        "# 2. Preprocessing & Splitting\n",
-        "X = df.drop('Outcome', axis=1)\n",
-        "y = df['Outcome']\n",
-        "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
-        "\n",
-        "# 3. Model Training\n",
-        "model = RandomForestClassifier(n_estimators=100, random_state=42)\n",
-        "model.fit(X_train, y_train)\n",
-        "\n",
-        "# 4. Evaluation\n",
-        "y_pred = model.predict(X_test)\n",
-        "print(f\"Model Accuracy: {accuracy_score(y_test, y_pred) * 100:.2f}%\\n\")\n",
-        "print(\"Classification Report:\")\n",
-        "print(classification_report(y_test, y_pred))"
-      ]
-    }
-  ]
-}
+# ==========================================
+# Task 1: Disease Prediction Model
+# ==========================================
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.datasets import make_classification
+import warnings
+warnings.filterwarnings('ignore')
+
+print("--- Step 1: Generating Clinical/Disease Symptom Dataset ---")
+X, y = make_classification(n_samples=1200, n_features=10, n_classes=2, random_state=42)
+
+symptom_features = ['Fever', 'Cough', 'Fatigue', 'DifficultyBreathing', 'Headache', 'BodyPain', 'LossOfTaste', 'SoreThroat', 'Age', 'BloodPressure']
+df = pd.DataFrame(X, columns=symptom_features)
+df['DiseasePresent'] = y # Target variable (0: Negative, 1: Positive)
+
+print(df.head())
+
+print("\n--- Step 2: Splitting Data into Train & Test Sets ---")
+X_train, X_test, y_train, y_test = train_test_split(df.drop('DiseasePresent', axis=1), df['DiseasePresent'], test_size=0.2, random_state=42)
+
+print(f"Training Set Shape: {X_train.shape}")
+print(f"Testing Set Shape: {X_test.shape}")
+
+print("\n--- Step 3: Training Gradient Boosting Model ---")
+model = GradientBoostingClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+print("Disease prediction model trained successfully!")
+
+print("\n--- Step 4: Model Evaluation ---")
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"\nDisease Prediction Model Accuracy: {accuracy * 100:.2f}%\n")
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
