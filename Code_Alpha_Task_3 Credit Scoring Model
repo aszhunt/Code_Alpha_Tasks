@@ -1,124 +1,47 @@
-{
-  "nbformat": 4,
-  "nbformat_minor": 0,
-  "metadata": {
-    "colab": {
-      "provenance": []
-    },
-    "kernelspec": {
-      "name": "python3",
-      "display_name": "Python 3"
-    },
-    "language_info": {
-      "name": "python"
-    }
-  },
-  "cells": [
-    {
-      "cell_type": "code",
-      "execution_count": 1,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "sFxMHpSvImkv",
-        "outputId": "a2c257e2-7092-4227-f018-9ada808a9ed2"
-      },
-      "outputs": [
-        {
-          "output_type": "stream",
-          "name": "stdout",
-          "text": [
-            "--- Step 1: Generating/Loading Financial Classification Dataset ---\n",
-            "     Income  ExistingDebts  PaymentHistory  CreditUtilization  \\\n",
-            "0  0.538435      -1.236136        0.212184           0.174502   \n",
-            "1 -0.376301      -2.929449       -0.144079           0.023662   \n",
-            "2  0.155191       0.000207        0.531307           0.371714   \n",
-            "3 -0.237683       1.598322        0.394418           0.648727   \n",
-            "4 -0.501402      -1.002217       -0.226625          -0.410414   \n",
-            "\n",
-            "   EmploymentLength       Age  NumCreditCards  LoanAmount  Creditworthiness  \n",
-            "0         -0.277035  1.254338       -0.225485    0.731001                 1  \n",
-            "1          0.652572  2.052972       -0.281049    1.088770                 1  \n",
-            "2         -0.906845 -0.009300       -0.365368   -0.327895                 0  \n",
-            "3          0.544798  0.733548       -1.409775    0.008784                 0  \n",
-            "4         -0.436103 -0.752435        0.925074   -1.466785                 1  \n",
-            "\n",
-            "--- Step 2: Data Splitting ---\n",
-            "Training Set Shape: (800, 8)\n",
-            "Testing Set Shape: (200, 8)\n",
-            "\n",
-            "--- Step 3: Model Training (Random Forest Classifier) ---\n",
-            "Model training completed successfully!\n",
-            "\n",
-            "--- Step 4: Model Evaluation ---\n",
-            "Credit Scoring Model Accuracy: 94.00%\n",
-            "\n",
-            "Classification Report:\n",
-            "              precision    recall  f1-score   support\n",
-            "\n",
-            "           0       0.92      0.97      0.94       102\n",
-            "           1       0.97      0.91      0.94        98\n",
-            "\n",
-            "    accuracy                           0.94       200\n",
-            "   macro avg       0.94      0.94      0.94       200\n",
-            "weighted avg       0.94      0.94      0.94       200\n",
-            "\n",
-            "Confusion Matrix:\n",
-            "[[99  3]\n",
-            " [ 9 89]]\n"
-          ]
-        }
-      ],
-      "source": [
-        "# ==========================================\n",
-        "# Task 1: Credit Scoring Model\n",
-        "# ==========================================\n",
-        "import pandas as pd\n",
-        "import numpy as np\n",
-        "from sklearn.model_selection import train_test_split\n",
-        "from sklearn.ensemble import RandomForestClassifier\n",
-        "from sklearn.metrics import accuracy_score, classification_report, confusion_matrix\n",
-        "from sklearn.datasets import make_classification\n",
-        "import warnings\n",
-        "warnings.filterwarnings('ignore')\n",
-        "\n",
-        "print(\"--- Step 1: Generating/Loading Financial Classification Dataset ---\")\n",
-        "# 1. Generating synthetic financial history data for credit scoring\n",
-        "X, y = make_classification(n_samples=1000, n_features=8, n_classes=2, random_state=42)\n",
-        "\n",
-        "# Converting to DataFrame to look like professional financial/credit data\n",
-        "column_names = ['Income', 'ExistingDebts', 'PaymentHistory', 'CreditUtilization', 'EmploymentLength', 'Age', 'NumCreditCards', 'LoanAmount']\n",
-        "df = pd.DataFrame(X, columns=column_names)\n",
-        "df['Creditworthiness'] = y # Target variable (0: Low Risk/Good, 1: High Risk/Bad)\n",
-        "\n",
-        "print(df.head())\n",
-        "\n",
-        "print(\"\\n--- Step 2: Data Splitting ---\")\n",
-        "# 2. Splitting into Training (80%) and Testing (20%) Sets\n",
-        "X_train, X_test, y_train, y_test = train_test_split(df.drop('Creditworthiness', axis=1), df['Creditworthiness'], test_size=0.2, random_state=42)\n",
-        "\n",
-        "print(f\"Training Set Shape: {X_train.shape}\")\n",
-        "print(f\"Testing Set Shape: {X_test.shape}\")\n",
-        "\n",
-        "print(\"\\n--- Step 3: Model Training (Random Forest Classifier) ---\")\n",
-        "# 3. Training Random Forest Model for Credit Risk Prediction\n",
-        "model = RandomForestClassifier(n_estimators=100, random_state=42)\n",
-        "model.fit(X_train, y_train)\n",
-        "print(\"Model training completed successfully!\")\n",
-        "\n",
-        "print(\"\\n--- Step 4: Model Evaluation ---\")\n",
-        "# 4. Evaluating Predictions\n",
-        "y_pred = model.predict(X_test)\n",
-        "accuracy = accuracy_score(y_test, y_pred)\n",
-        "\n",
-        "print(f\"Credit Scoring Model Accuracy: {accuracy * 100:.2f}%\\n\")\n",
-        "print(\"Classification Report:\")\n",
-        "print(classification_report(y_test, y_pred))\n",
-        "\n",
-        "print(\"Confusion Matrix:\")\n",
-        "print(confusion_matrix(y_test, y_pred))"
-      ]
-    }
-  ]
-}
+# ==========================================
+# Task 3: Credit Scoring Model
+# ==========================================
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.datasets import make_classification
+import warnings
+warnings.filterwarnings('ignore')
+
+print("--- Step 1: Generating/Loading Financial Classification Dataset ---")
+# 1. Generating synthetic financial history data for credit scoring
+X, y = make_classification(n_samples=1000, n_features=8, n_classes=2, random_state=42)
+
+# Converting to DataFrame to look like professional financial/credit data
+column_names = ['Income', 'ExistingDebts', 'PaymentHistory', 'CreditUtilization', 'EmploymentLength', 'Age', 'NumCreditCards', 'LoanAmount']
+df = pd.DataFrame(X, columns=column_names)
+df['Creditworthiness'] = y # Target variable (0: Low Risk/Good, 1: High Risk/Bad)
+
+print(df.head())
+
+print("\n--- Step 2: Data Splitting ---")
+# 2. Splitting into Training (80%) and Testing (20%) Sets
+X_train, X_test, y_train, y_test = train_test_split(df.drop('Creditworthiness', axis=1), df['Creditworthiness'], test_size=0.2, random_state=42)
+
+print(f"Training Set Shape: {X_train.shape}")
+print(f"Testing Set Shape: {X_test.shape}")
+
+print("\n--- Step 3: Model Training (Random Forest Classifier) ---")
+# 3. Training Random Forest Model for Credit Risk Prediction
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+print("Model training completed successfully!")
+
+print("\n--- Step 4: Model Evaluation ---")
+# 4. Evaluating Predictions
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"Credit Scoring Model Accuracy: {accuracy * 100:.2f}%\n")
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
